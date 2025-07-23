@@ -17,21 +17,37 @@ import {
 
 console.log("Quiz JS loaded...");
 
-const questions = [
-  {
-    text: "Quelle est la capitale de la France ?",
-    answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
-    correct: 1,
-    timeLimit: 10,
-  },
-  {
-    text: "Combien font 2 + 3 ?",
-    answers: ["3", "4", "5", "1"],
-    correct: 2,
-    timeLimit: 5,
-  },
-];
-
+const translations = {
+  fr: [
+    {
+      text: "Quelle est la capitale de la France ?",
+      answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
+      correct: 1,
+      timeLimit: 10,
+    },
+    {
+      text: "Combien font 2 + 3 ?",
+      answers: ["3", "4", "5", "1"],
+      correct: 2,
+      timeLimit: 5,
+    },
+  ],
+  en: [
+    {
+      text: "What is the capital of France?",
+      answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
+      correct: 1,
+      timeLimit: 10,
+    },
+    {
+      text: "How much is 2 + 3?",
+      answers: ["3", "4", "5", "1"],
+      correct: 2,
+      timeLimit: 5,
+    },
+  ],
+};
+let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
 let bestScore = loadFromLocalStorage("bestScore", 0);
@@ -65,16 +81,20 @@ restartBtn.addEventListener("click", restartQuiz);
 setText(bestScoreValue, bestScore);
 
 function startQuiz() {
-  hideElement(introScreen);
-  showElement(questionScreen);
+  const selectedLang = document.getElementById("language-select").value;
+
+  
+  questions = translations[selectedLang] || translations["fr"];
+
+  introScreen.style.display = "none";
+  questionScreen.style.display = "block";
 
   currentQuestionIndex = 0;
   score = 0;
-
-  setText(totalQuestionsSpan, questions.length);
-
+  totalQuestionsSpan.textContent = questions.length;
   showQuestion();
 }
+
 
 function showQuestion() {
   clearInterval(timerId);
