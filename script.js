@@ -13,7 +13,6 @@ const questions = [
     correct: 2,
     timeLimit: 5,
   },
-  // Ajoutez d’autres questions si besoin
 ];
 
 // Variables
