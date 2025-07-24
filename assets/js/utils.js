@@ -20,3 +20,5 @@ export const startTimer = (duration, onTick, onComplete) => {
   }, 1000);
   return timerId;
 };
+
+

@@ -72,7 +72,7 @@ function startQuiz() {
   score = 0;
 
   setText(totalQuestionsSpan, questions.length);
-
+  randomizeQuestions();
   showQuestion();
 }
 
