@@ -1,4 +1,4 @@
-console.log("Quiz JS loaded...");
+/* console.log("Quiz JS loaded...");
 
 const questions = [
   {
@@ -27,7 +27,7 @@ const introScreen = document.getElementById("intro-screen");
 const questionScreen = document.getElementById("question-screen");
 const resultScreen = document.getElementById("result-screen");
 
-const bestScoreValue = document.getElementById("best-score-value");
+const bestScoreIntro = document.getElementById("best-score-intro");
 const bestScoreEnd = document.getElementById("best-score-end");
 
 const questionText = document.getElementById("question-text");
@@ -51,7 +51,7 @@ window.addEventListener("DOMContentLoaded", () => {
   restartBtn.addEventListener("click", restartQuiz);
 
   loadBestScore();
-  bestScoreValue.textContent = bestScore;
+  bestScoreIntro.textContent = bestScore;
 });
 
 function loadBestScore() {
@@ -77,12 +77,7 @@ function startQuiz() {
   randomizeQuestions();
   showQuestion();
 }
-export function randomizeQuestions() {
-  for (let i = questions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questions[i], questions[j]] = [questions[j], questions[i]];
-  }
-}
+
 
 function showQuestion() {
   // Stop any previous timer
@@ -176,5 +171,6 @@ function restartQuiz() {
   resultScreen.style.display = "none";
   introScreen.style.display = "block";
 
-  bestScoreValue.textContent = bestScore;
+  bestScoreIntro.textContent = bestScore;
 }
+ */
