@@ -144,6 +144,9 @@ function applyTranslations(lang) {
   // Met à jour les scores affichés
   setText(bestScoreIntro, bestScore);
   setText(bestScoreEnd, bestScore);
+
+  const shareButton = getElement("#share-btn");
+  if (shareButton) shareButton.textContent = lang === "en" ? "Share" : "Partager";
 }
 
 export function randomizeQuestions() {
@@ -252,4 +255,22 @@ function restartQuiz() {
   const selectedLang = languageSelect.value;
   const bestScoreLabel = uiText[selectedLang]?.bestScore || "Meilleur score";
   bestScoreIntroLabel.textContent = bestScoreLabel + " : ";
+}
+
+const shareBtn = getElement("#share-btn");
+if (shareBtn) {
+  shareBtn.addEventListener("click", shareScore);
+}
+
+function shareScore() {
+  const selectedLang = languageSelect.value;
+  const baseText = {
+    fr: `J'ai obtenu un score de ${score} / ${questions.length} au Quiz Dynamique ! 💡`,
+    en: `I scored ${score} / ${questions.length} on the Dynamic Quiz! 💡`,
+  };
+
+  const text = encodeURIComponent(baseText[selectedLang] || baseText.fr);
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${text}`;
+
+  window.open(twitterUrl, "_blank");
 }
