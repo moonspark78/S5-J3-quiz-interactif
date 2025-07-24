@@ -87,7 +87,6 @@ button:hover {
 	margin-bottom: 10px;
 }
 
-/* Styles pour le tableau récapitulatif */
 .summary-table-wrapper {
 	margin-top: 30px;
 	margin-bottom: 20px;
@@ -120,11 +119,27 @@ button:hover {
 }
 
 .wrong-answer-summary {
-	color: #d32f2f; /* Rouge pour les mauvaises réponses */
+	color: #d32f2f;
 	font-weight: bold;
 }
 
 .correct-answer-summary {
-	color: #2e7d32; /* Vert pour les bonnes réponses */
+	color: #2e7d32;
 	font-weight: bold;
+}
+
+#infinite-mode-btn,
+.end-game-button {
+	background-color: #00796b;
+}
+
+#infinite-mode-btn:hover,
+.end-game-button:hover {
+	background-color: #004d40;
+}
+
+.end-game-button {
+	display: block;
+	margin-top: 20px;
+	width: 60%;
 }

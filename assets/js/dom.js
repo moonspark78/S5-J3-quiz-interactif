@@ -87,3 +87,12 @@ export const createSummaryTable = (
 
   return tableContainer;
 };
+
+export const createEndGameButton = (text, onClick) => {
+  const btn = document.createElement("button");
+  btn.textContent = text;
+  btn.id = "end-game-btn";
+  btn.classList.add("end-game-button");
+  btn.addEventListener("click", onClick);
+  return btn;
+};
