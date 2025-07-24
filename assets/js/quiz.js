@@ -97,7 +97,7 @@ const translations = {
 			answers: [
 				"Albert Lebrun",
 				"René Coty",
-				"Felix Faure",
+				"Félix Faure",
 				"François Mitterrand",
 			],
 			correct: 0,
@@ -152,7 +152,7 @@ const translations = {
 			answers: [
 				"Albert Lebrun",
 				"René Coty",
-				"Felix Faure",
+				"Félix Faure",
 				"François Mitterrand",
 			],
 			correct: 0,
