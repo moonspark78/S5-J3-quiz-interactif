@@ -1,4 +1,4 @@
-// quiz.js
+//quiz.js
 import {
   getElement,
   showElement,
@@ -9,6 +9,7 @@ import {
   lockAnswers,
   markCorrectAnswer,
 } from "./dom.js";
+
 import {
   loadFromLocalStorage,
   saveToLocalStorage,
@@ -17,21 +18,67 @@ import {
 
 console.log("Quiz JS loaded...");
 
-const questions = [
-  {
-    text: "Quelle est la capitale de la France ?",
-    answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
-    correct: 1,
-    timeLimit: 10,
+const uiText = {
+  fr: {
+    title: "Quiz Dynamique",
+    introNotice: "Testez vos connaissances en quelques questions chronométrées !",
+    bestScore: "Meilleur score",
+    start: "Commencer le quiz",
+    question: "Question",
+    timeLeft: "Temps restant",
+    next: "Question suivante",
+    resultTitle: "Résultat final",
+    yourScore: "Votre score",
+    restart: "Recommencer",
+    selectLanguage: "Choisir la langue",
   },
-  {
-    text: "Combien font 2 + 3 ?",
-    answers: ["3", "4", "5", "1"],
-    correct: 2,
-    timeLimit: 5,
+  en: {
+    title: "Dynamic Quiz",
+    introNotice: "Test your knowledge with a few timed questions!",
+    bestScore: "Best score",
+    start: "Start the quiz",
+    question: "Question",
+    timeLeft: "Time left",
+    next: "Next question",
+    resultTitle: "Final result",
+    yourScore: "Your score",
+    restart: "Restart",
+    selectLanguage: "Select language",
   },
-];
+};
 
+const translations = {
+  fr: [
+    {
+      text: "Quelle est la capitale de la France ?",
+      answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
+      correct: 1,
+      timeLimit: 10,
+    },
+    {
+      text: "Combien font 2 + 3 ?",
+      answers: ["3", "4", "5", "1"],
+      correct: 2,
+      timeLimit: 5,
+    },
+  ],
+  en: [
+    {
+      text: "What is the capital of France?",
+      answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
+      correct: 1,
+      timeLimit: 10,
+    },
+    {
+      text: "How much is 2 + 3?",
+      answers: ["3", "4", "5", "1"],
+      correct: 2,
+      timeLimit: 5,
+    },
+  ],
+};
+
+let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
 let bestScore = loadFromLocalStorage("bestScore", 0);
@@ -42,7 +89,10 @@ const introScreen = getElement("#intro-screen");
 const questionScreen = getElement("#question-screen");
 const resultScreen = getElement("#result-screen");
 
-const bestScoreValue = getElement("#best-score-value");
+const bestScoreIntroLabel = getElement("#best-score-intro-label");
+const bestScoreIntro = getElement("#best-score-intro");
+
+const bestScoreEndLabel = getElement("#best-score-end-label");
 const bestScoreEnd = getElement("#best-score-end");
 
 const questionText = getElement("#question-text");
@@ -62,17 +112,55 @@ startBtn.addEventListener("click", startQuiz);
 nextBtn.addEventListener("click", nextQuestion);
 restartBtn.addEventListener("click", restartQuiz);
 
-setText(bestScoreValue, bestScore);
+setText(bestScoreIntro, bestScore);
+setText(bestScoreEnd, bestScore);
+
+const languageSelect = getElement("#language-select");
+languageSelect.addEventListener("change", () => {
+  applyTranslations(languageSelect.value);
+});
+
+applyTranslations(languageSelect.value);
+
+function applyTranslations(lang) {
+  const t = uiText[lang] || uiText["fr"];
+
+  document.title = t.title;
+  setText(getElement("h1"), t.title);
+  setText(getElement(".notice"), t.introNotice);
+  getElement("label[for='language-select']").textContent = t.selectLanguage;
+  setText(startBtn, t.start);
+  setText(nextBtn, t.next);
+  setText(restartBtn, t.restart);
+  setText(getElement("#result-screen h2"), t.resultTitle);
+  setText(scoreText, "");
+
+  const timerLabel = getElement("#timer-div label");
+  if (timerLabel) timerLabel.textContent = `${t.timeLeft} :`;
+
+  bestScoreIntroLabel.textContent = t.bestScore + " : ";
+  bestScoreEndLabel.textContent = t.bestScore + " : ";
+
+  // Met à jour les scores affichés
+  setText(bestScoreIntro, bestScore);
+  setText(bestScoreEnd, bestScore);
+}
 
 function startQuiz() {
+  const selectedLang = languageSelect.value;
+
+  applyTranslations(selectedLang);
+  questions = translations[selectedLang] || translations["fr"];
+
   hideElement(introScreen);
   showElement(questionScreen);
 
   currentQuestionIndex = 0;
   score = 0;
 
-  setText(totalQuestionsSpan, questions.length);
   randomizeQuestions();
+  totalQuestionsSpan.textContent = questions.length;
+
   showQuestion();
 }
 
@@ -131,18 +219,30 @@ function endQuiz() {
   hideElement(questionScreen);
   showElement(resultScreen);
 
-  updateScoreDisplay(scoreText, score, questions.length);
+  const selectedLang = languageSelect.value;
+
+  updateScoreDisplay(scoreText, score, questions.length, selectedLang);
 
   if (score > bestScore) {
     bestScore = score;
     saveToLocalStorage("bestScore", bestScore);
   }
+
   setText(bestScoreEnd, bestScore);
+  setText(bestScoreIntro, bestScore);
+
+  const bestScoreLabel = uiText[selectedLang]?.bestScore || "Meilleur score";
+  bestScoreEndLabel.textContent = bestScoreLabel + " : ";
+  bestScoreIntroLabel.textContent = bestScoreLabel + " : ";
 }
 
 function restartQuiz() {
   hideElement(resultScreen);
   showElement(introScreen);
 
-  setText(bestScoreValue, bestScore);
+  setText(bestScoreIntro, bestScore);
+
+  const selectedLang = languageSelect.value;
+  const bestScoreLabel = uiText[selectedLang]?.bestScore || "Meilleur score";
+  bestScoreIntroLabel.textContent = bestScoreLabel + " : ";
 }

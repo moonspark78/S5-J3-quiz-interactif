@@ -1,4 +1,4 @@
-// dom.js
+//dom.js
 export const getElement = (selector) => document.querySelector(selector);
 export const showElement = (element) => (element.style.display = "block");
 export const hideElement = (element) => (element.style.display = "none");
@@ -11,8 +11,12 @@ export const createAnswerButton = (text, onClick) => {
   return btn;
 };
 
-export const updateScoreDisplay = (scoreElement, score, total) => {
-  scoreElement.textContent = `Votre score : ${score} / ${total}`;
+export const updateScoreDisplay = (scoreElement, score, total, lang = "fr") => {
+  const labels = {
+    fr: "Votre score",
+    en: "Your score",
+  };
+  scoreElement.textContent = `${labels[lang] || labels.fr} : ${score} / ${total}`;
 };
 
 export const lockAnswers = (container) => {
