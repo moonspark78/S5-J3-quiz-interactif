@@ -37,7 +37,8 @@ const uiText = {
     summaryQuestion: "Question",
     summaryYourAnswer: "Votre réponse",
     summaryCorrectAnswer: "Bonne réponse",
-    infiniteMode: "Mode Infini", // Nouveau texte
+    infiniteMode: "Mode Infini",
+    endGame: "Terminer la partie",
     darkModeOn: "Activer le mode sombre",
     darkModeOff: "Désactiver le mode sombre",
   },
@@ -57,8 +58,8 @@ const uiText = {
     summaryQuestion: "Question",
     summaryYourAnswer: "Your Answer",
     summaryCorrectAnswer: "Correct Answer",
-    infiniteMode: "Infinite Mode", // New text
-    endGame: "End Game", // New text
+    infiniteMode: "Infinite Mode",
+    endGame: "End Game",
     darkModeOn: "Enable dark mode",
     darkModeOff: "Disable dark mode",
   },
