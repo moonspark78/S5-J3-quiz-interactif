@@ -18,7 +18,6 @@ console.log("Quiz JS loaded...");
 
 const uiText = {
   fr: {
-    //title: "Quiz Dynamique",
     introNotice: "Testez vos connaissances en quelques questions chronométrées !",
     bestScore: "Meilleur score",
     start: "Commencer le quiz",
@@ -37,13 +36,14 @@ const uiText = {
     endGame: "Terminer la partie",
     darkModeOn: "Activer le mode sombre",
     darkModeOff: "Désactiver le mode sombre",
-    audioMode: "Mode Audio", // New translation for Audio Mode button
-    audioQuestionText: "Écoutez la question audio et choisissez votre réponse !", // Text for audio questions
-    yesJeanPierre: "Oui Jean Pierre", // Translation for special audio question answer
-    thisGameIsBad: "Ce jeu est nul", // Translation for special audio question answer
+    audioMode: "Mode Audio",
+    audioQuestionText: "Écoutez la question audio et choisissez votre réponse !",
+    yesJeanPierre: "Oui Jean Pierre",
+    thisGameIsBad: "Ce jeu est nul",
+    hint: "🪄 Indice 🪄",
+    noHint: "Pas d'indice disponible.",
   },
   en: {
-    //title: "Dynamic Quiz",
     introNotice: "Test your knowledge with a few timed questions!",
     bestScore: "Best score",
     start: "Start the quiz",
@@ -62,10 +62,12 @@ const uiText = {
     endGame: "End Game",
     darkModeOn: "Enable dark mode",
     darkModeOff: "Disable dark mode",
-    audioMode: "Audio Mode", // New translation for Audio Mode button
-    audioQuestionText: "Listen to the audio question and choose your answer!", // Text for audio questions
-    yesJeanPierre: "Yes Jean Pierre", // Translation for special audio question answer
-    thisGameIsBad: "This game is bad", // Translation for special audio question answer
+    audioMode: "Audio Mode",
+    audioQuestionText: "Listen to the audio question and choose your answer!",
+    yesJeanPierre: "Yes Jean Pierre",
+    thisGameIsBad: "This game is bad",
+    hint: "🪄 Hint 🪄",
+    noHint: "No hint available.",
   },
 };
 
@@ -140,14 +142,13 @@ const translations = {
       hint: "Il était président juste avant l’occupation allemande.",
       audio: "./assets/audio/q8.mp3",
     },
-    // The special audio question (always the last one for audio mode in FR)
     {
-      text: "Est-ce que c'est votre dernier mot ?", // This text will be overridden by audioQuestionText during audio playback
-      answers: [], // Answers will be dynamically set based on uiText
+      text: "Est-ce que c'est votre dernier mot ?",
+      answers: [],
       correct: 0,
       timeLimit: 15,
       audio: "./assets/audio/special_audio_jpf.mp3",
-      isSpecialAudioQuestion: true, // Marker for this special question
+      isSpecialAudioQuestion: true,
     },
   ],
   en: [
@@ -215,7 +216,6 @@ const translations = {
   ],
 };
 
-
 let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
@@ -223,7 +223,7 @@ let bestScore = loadFromLocalStorage("bestScore", 0);
 let timerId = null;
 let answeredQuestionsSummary = [];
 let isInfiniteMode = false;
-let isAudioMode = false; // New state variable for audio mode
+let isAudioMode = false;
 
 // DOM Elements
 const introScreen = getElement("#intro-screen");
@@ -242,7 +242,7 @@ const nextBtn = getElement("#next-btn");
 const startBtn = getElement("#start-btn");
 const restartBtn = getElement("#restart-btn");
 const infiniteModeBtn = getElement("#infinite-mode-btn");
-const audioModeBtn = getElement("#audio-mode-btn"); // New button for audio mode
+const audioModeBtn = getElement("#audio-mode-btn");
 
 const scoreText = getElement("#score-text");
 const timeLeftSpan = getElement("#time-left");
@@ -253,21 +253,20 @@ const totalQuestionsSpan = getElement("#total-questions");
 
 const summaryTableContainer = getElement("#summary-table-container");
 const languageSelect = getElement("#language-select");
+
+const darkModeBtn = getElement("#dark-mode-btn");
+
 function updateDarkModeButtonText() {
   const lang = languageSelect.value;
   const isDark = document.body.classList.contains("dark-mode");
   darkModeBtn.textContent = isDark ? uiText[lang].darkModeOff : uiText[lang].darkModeOn;
 }
 
-const darkModeBtn = getElement("#dark-mode-btn");
-
 const savedDarkMode = loadFromLocalStorage("darkMode", false);
 if (savedDarkMode) {
   document.body.classList.add("dark-mode");
-  darkModeBtn.textContent = "Désactiver le mode sombre";
-} else {
-  darkModeBtn.textContent = "Activer le mode sombre";
 }
+updateDarkModeButtonText();
 
 darkModeBtn.addEventListener("click", () => {
   const isDarkMode = document.body.classList.toggle("dark-mode");
@@ -275,30 +274,28 @@ darkModeBtn.addEventListener("click", () => {
   updateDarkModeButtonText();
 });
 
-// Init
-startBtn.addEventListener("click", () => startQuiz(false, false)); // Normal mode
-infiniteModeBtn.addEventListener("click", () => startQuiz(true, false)); // Infinite mode
-audioModeBtn.addEventListener("click", () => startQuiz(false, true)); // Audio mode
+startBtn.addEventListener("click", () => startQuiz(false, false));
+infiniteModeBtn.addEventListener("click", () => startQuiz(true, false));
+audioModeBtn.addEventListener("click", () => startQuiz(false, true));
 nextBtn.addEventListener("click", nextQuestion);
-restartBtn.addEventListener("click", restartQuiz);
-
-setText(bestScoreIntro, bestScore);
-setText(bestScoreEnd, bestScore);
+restartBtn.addEventListener("click", () => {
+  hideElement(resultScreen);
+  showElement(introScreen);
+});
 
 function nextQuestion() {
   currentQuestionIndex++;
-  if (currentQuestionIndex < questions.length) {
-    showQuestion();
-  } else {
+
+  if (currentQuestionIndex >= questions.length) {
     endQuiz();
+  } else {
+    showQuestion();
   }
 }
-
 
 languageSelect.addEventListener("change", () => {
   applyTranslations(languageSelect.value);
   updateDarkModeButtonText();
-  // Show/hide audio mode button based on selected language
   if (languageSelect.value === "fr") {
     showElement(audioModeBtn);
   } else {
@@ -306,7 +303,9 @@ languageSelect.addEventListener("change", () => {
   }
 });
 
-// Initial application of translations and audio mode button visibility
+setText(bestScoreIntro, bestScore);
+setText(bestScoreEnd, bestScore);
+
 applyTranslations(languageSelect.value);
 if (languageSelect.value === "fr") {
   showElement(audioModeBtn);
@@ -317,14 +316,14 @@ if (languageSelect.value === "fr") {
 function applyTranslations(lang) {
   const t = uiText[lang] || uiText["fr"];
 
-  document.title = t.title;
+  document.title = t.title || "Quiz";
   setText(getElement(".notice"), t.introNotice);
   getElement("label[for='language-select']").textContent = t.selectLanguage;
   setText(startBtn, t.start);
   setText(nextBtn, t.next);
   setText(restartBtn, t.restart);
   setText(infiniteModeBtn, t.infiniteMode);
-  setText(audioModeBtn, t.audioMode); // Translate audio mode button
+  setText(audioModeBtn, t.audioMode);
   setText(getElement("#result-screen h2"), t.resultTitle);
   setText(scoreText, "");
 
@@ -336,21 +335,17 @@ function applyTranslations(lang) {
 
   setText(bestScoreIntro, bestScore);
   setText(bestScoreEnd, bestScore);
-
-  const shareButton = getElement("#share-btn");
-  if (shareButton) shareButton.textContent = lang === "en" ? "Share" : "Partager";
 }
 
-export function sortQuestionsByTimeLimit(questionsArray) {
-  // Ensure we are sorting a copy if needed, or modify the original array if that's the intention
-  return questionsArray.sort((a, b) => a.timeLimit - b.timeLimit);
-}
-
-export function randomizeQuestions(questionsArray) {
+function randomizeQuestions(questionsArray) {
   for (let i = questionsArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [questionsArray[i], questionsArray[j]] = [questionsArray[j], questionsArray[i]];
   }
+}
+
+function sortQuestionsByTimeLimit(questionsArray) {
+  return questionsArray.sort((a, b) => a.timeLimit - b.timeLimit);
 }
 
 function startQuiz(isInfinite, isAudio) {
@@ -360,70 +355,61 @@ function startQuiz(isInfinite, isAudio) {
   const selectedLang = languageSelect.value;
   const t = uiText[selectedLang];
 
-  // Only allow audio mode for French
   if (isAudioMode && selectedLang !== "fr") {
-    alert("Audio mode is only available in French."); // Or a more subtle UI feedback
+    alert("Audio mode is only available in French.");
     return;
   }
 
   applyTranslations(selectedLang);
-  // Clone questions to avoid modifying the original array from translations
+
   questions = [...(translations[selectedLang] || translations["fr"])];
 
-  // Handle the special audio question for FR audio mode
   if (isAudioMode && selectedLang === "fr") {
-    // Find the special question by its marker (assuming it's already in the translations.fr array)
     const specialAudioQ = questions.find(q => q.isSpecialAudioQuestion);
     if (specialAudioQ) {
-      // Set answers for the special question dynamically based on current language translations
       specialAudioQ.answers = [
         t.yesJeanPierre,
         t.thisGameIsBad,
       ];
-      // Ensure the special question is always the last one
-      questions = questions.filter(q => !q.isSpecialAudioQuestion); // Remove it from its current position
-      questions.push(specialAudioQ); // Add it back at the end
+      questions = questions.filter(q => !q.isSpecialAudioQuestion);
+      questions.push(specialAudioQ);
     }
   } else if (!isAudioMode) {
-    // If not in audio mode, filter out the special audio question if it somehow made it into the general list
     questions = questions.filter(q => !q.isSpecialAudioQuestion);
   }
 
-
   hideElement(introScreen);
   showElement(questionScreen);
+  hideElement(resultScreen);
 
   currentQuestionIndex = 0;
   score = 0;
   answeredQuestionsSummary = [];
 
-  // Apply randomization and sorting based on mode
-  if (!isAudioMode) { // Normal and Infinite modes (not audio mode)
+  if (!isAudioMode) {
     randomizeQuestions(questions);
-    if (!isInfiniteMode) { // Only sort by time limit for normal mode
+    if (!isInfiniteMode) {
       sortQuestionsByTimeLimit(questions);
     }
-  } else { // Audio mode: randomize and then sort by timeLimit, except for the last question (special audio)
-    // Exclude the last question (special audio) from randomization and sorting if it exists
+  } else {
     let questionsToProcess = [...questions];
     let specialQuestion = null;
 
     if (isAudioMode && selectedLang === "fr" && questionsToProcess[questionsToProcess.length - 1]?.isSpecialAudioQuestion) {
-        specialQuestion = questionsToProcess.pop(); // Remove last question if it's the special one
+      specialQuestion = questionsToProcess.pop();
     }
 
-    randomizeQuestions(questionsToProcess); // Randomize the rest
-    sortQuestionsByTimeLimit(questionsToProcess); // Sort the rest by time limit
+    randomizeQuestions(questionsToProcess);
+    sortQuestionsByTimeLimit(questionsToProcess);
 
     if (specialQuestion) {
-        questionsToProcess.push(specialQuestion); // Add the special question back at the end
+      questionsToProcess.push(specialQuestion);
     }
-    questions = questionsToProcess; // Update the main questions array
+    questions = questionsToProcess;
   }
 
-
   totalQuestionsSpan.textContent = questions.length;
-
+  updateScoreDisplay(scoreText, score);
   showQuestion();
 }
 
@@ -442,10 +428,11 @@ function showQuestion() {
   answersDiv.innerHTML = "";
   nextBtn.classList.add("hidden");
 
-    // -- Ajout du bloc indice --
+  // Remove previous hint container if any
   const existingHint = getElement("#hint-container");
   if (existingHint) existingHint.remove();
 
+  // Add hint container and button
   const hintContainer = document.createElement("div");
   hintContainer.id = "hint-container";
 
@@ -458,7 +445,7 @@ function showQuestion() {
   hintText.style.display = "none";
 
   hintButton.addEventListener("click", () => {
-    hintText.textContent = q.hint || uiText[languageSelect.value].noHint;
+    hintText.textContent = q.hint || uiText[languageSelect.value].noHint || "Pas d'indice disponible.";
     hintText.style.display = "block";
     hintButton.disabled = true;
   });
@@ -466,21 +453,20 @@ function showQuestion() {
   hintContainer.appendChild(hintButton);
   hintContainer.appendChild(hintText);
   questionText.after(hintContainer);
-  // -- Fin du bloc indice --
 
   if (isAudioMode && q.audio) {
-    hideElement(timerDiv); // Hide timer while audio plays
-    // Display a message indicating audio is playing
+    hideElement(timerDiv);
     setText(questionText, uiText[languageSelect.value].audioQuestionText);
 
     playAudio(q.audio, () => {
-      setText(questionText, q.text); // Restore original question text after audio
-      showElement(timerDiv); // Show timer after audio finishes
+      setText(questionText, q.text);
+      showElement(timerDiv);
+
       q.answers.forEach((answer, index) => {
         const btn = createAnswerButton(answer, () => selectAnswer(index, btn));
         answersDiv.appendChild(btn);
       });
-      // Start timer ONLY after audio finishes
+
       timeLeftSpan.textContent = q.timeLimit;
       timerId = startTimer(
         q.timeLimit,
@@ -498,66 +484,49 @@ function showQuestion() {
         }
       );
     });
-  }
-
-  if (isInfiniteMode) {
+  } else if (isInfiniteMode) {
     hideElement(timerDiv);
-    const existingEndGameBtn = getElement("#end-game-btn");
-    if (!existingEndGameBtn) {
-      const endGameBtn = createEndGameButton(
-        uiText[languageSelect.value].endGame,
-        endQuiz
-      );
-    // Standard question display logic (for normal and infinite modes, or audio questions without audio files)
-    showElement(timerDiv);
-    const existingEndGameBtn = getElement("#end-game-btn");
-    if (existingEndGameBtn) {
-      hideElement(existingEndGameBtn);
-    }
 
-    setText(questionText, q.text); // Ensure question text is set for non-audio or audio without audio file
+    setText(questionText, q.text);
+
     q.answers.forEach((answer, index) => {
       const btn = createAnswerButton(answer, () => selectAnswer(index, btn));
       answersDiv.appendChild(btn);
     });
 
-    if (isInfiniteMode) {
-      hideElement(timerDiv);
-      const existingEndGameBtn = getElement("#end-game-btn");
-      if (!existingEndGameBtn) {
-        const endGameBtn = createEndGameButton(
-          uiText[languageSelect.value].endGame,
-          endQuiz
-        );
-        answersDiv.after(endGameBtn);
-      } else {
-        showElement(existingEndGameBtn);
-      }
-    } else {
-      showElement(timerDiv);
-      const existingEndGameBtn = getElement("#end-game-btn");
-      if (existingEndGameBtn) {
-        hideElement(existingEndGameBtn);
-      }
-
-      timeLeftSpan.textContent = q.timeLimit;
-      timerId = startTimer(
-        q.timeLimit,
-        (timeLeft) => setText(timeLeftSpan, timeLeft),
-        () => {
-          const q = questions[currentQuestionIndex];
-          answeredQuestionsSummary.push({
-            question: q.text,
-            yourAnswer: uiText[languageSelect.value].timeLeft + " : 0s",
-            correctAnswer: q.answers[q.correct],
-            isCorrect: false,
-          });
-          lockAnswers(answersDiv);
-          markCorrectAnswer(answersDiv, q.correct);
-          nextBtn.classList.remove("hidden");
-        }
-      );
+    let endGameBtn = getElement("#end-game-btn");
+    if (!endGameBtn) {
+      endGameBtn = createEndGameButton(uiText[languageSelect.value].endGame, endQuiz);
+      answersDiv.after(endGameBtn);
     }
+    showElement(endGameBtn);
+
+  } else {
+    showElement(timerDiv);
+
+    setText(questionText, q.text);
+
+    q.answers.forEach((answer, index) => {
+      const btn = createAnswerButton(answer, () => selectAnswer(index, btn));
+      answersDiv.appendChild(btn);
+    });
+
+    timeLeftSpan.textContent = q.timeLimit;
+    timerId = startTimer(
+      q.timeLimit,
+      (timeLeft) => setText(timeLeftSpan, timeLeft),
+      () => {
+        answeredQuestionsSummary.push({
+          question: q.text,
+          yourAnswer: uiText[languageSelect.value].timeLeft + " : 0s",
+          correctAnswer: q.answers[q.correct],
+          isCorrect: false,
+        });
+        lockAnswers(answersDiv);
+        markCorrectAnswer(answersDiv, q.correct);
+        nextBtn.classList.remove("hidden");
+      }
+    );
   }
 }
 
@@ -662,6 +631,7 @@ function restartQuiz() {
     hideElement(audioModeBtn);
   }
 }
+restartBtn.addEventListener("click", restartQuiz);
 
 const shareBtn = getElement("#share-btn");
 if (shareBtn) {
@@ -679,4 +649,4 @@ function shareScore() {
   const twitterUrl = `https://twitter.com/intent/tweet?text=${text}`;
 
   window.open(twitterUrl, "_blank");
-}}
+}
