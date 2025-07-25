@@ -72,42 +72,49 @@ const translations = {
       answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
       correct: 1,
       timeLimit: 10,
+      hint: "C'est la ville où se trouve la tour Eiffel.",
     },
     {
       text: "Combien font 2 + 3 ?",
       answers: ["3", "4", "5", "1"],
       correct: 2,
       timeLimit: 5,
+      hint: "C'est plus que 4 et moins que 6.",
     },
     {
       text: "Quelle est la capitale de la Belgique ?",
       answers: ["Bruxelles", "Anvers", "Liège", "Namur"],
       correct: 0,
       timeLimit: 10,
+      hint: "C'est aussi le siège de l'Union européenne.",
     },
     {
       text: "Quelle est la couleur du cheval blanc d'Henry IV ?",
       answers: ["Noir", "Blanc", "Rouge", "Vert", "Blanche"],
       correct: 4,
       timeLimit: 5,
+      hint: "La réponse est littéralement dans la question.",
     },
     {
       text: "Quelle est la capitale de la Mongolie ?",
       answers: ["Ulanbator", "Shanghai", "Sainte-Anne", "Omsk"],
       correct: 0,
       timeLimit: 10,
+      hint: "Commence par 'Ulan...'.",
     },
     {
       text: "Quel nombre n'est pas un nombre premier ?",
       answers: ["2", "11", "17", "54"],
       correct: 3,
       timeLimit: 15,
+      hint: "C'est un nombre pair divisible par 3.",
     },
     {
       text: "Comment s'appelle le protagoniste Goa'Uld dans l'équipage SG-1 ?",
       answers: ["Jarod", "Spock", "Teal'c", "Uld'Gald"],
       correct: 2,
       timeLimit: 10,
+      hint: "C'est un Jaffa loyal aux humains.",
     },
     {
       text: "Qui est le dernier président de la 3eme république Française ?",
@@ -119,6 +126,7 @@ const translations = {
       ],
       correct: 0,
       timeLimit: 15,
+      hint: "Il était président juste avant l’occupation allemande.",
     },
   ],
   en: [
@@ -127,42 +135,49 @@ const translations = {
       answers: ["Marseille", "Paris", "Lyon", "Bordeaux"],
       correct: 1,
       timeLimit: 10,
+      hint: "It's the city with the Eiffel Tower.",
     },
     {
       text: "How much is 2 + 3?",
       answers: ["3", "4", "5", "1"],
       correct: 2,
       timeLimit: 5,
+      hint: "More than 4 and less than 6.",
     },
     {
       text: "What is the capital of Belgium?",
       answers: ["Brussels", "Antwerp", "Liege", "Namur"],
       correct: 0,
       timeLimit: 10,
+      hint: "It's also the EU headquarters.",
     },
     {
       text: "What is the color of the white horse of Henry IV?",
       answers: ["Black", "White", "Red", "Green"],
       correct: 1,
       timeLimit: 5,
+      hint: "The answer is in the question.",
     },
     {
       text: "What is the capital of Mongolia?",
       answers: ["Ulan Bator", "Shanghai", "Sainte-Anne", "Omsk"],
       correct: 0,
       timeLimit: 10,
+      hint: "Starts with 'Ulan...'.",
     },
     {
       text: "What is not a prime number?",
       answers: ["2", "11", "17", "54"],
       correct: 3,
       timeLimit: 15,
+      hint: "It's even and divisible by 3.",
     },
     {
       text: "What is the name of the protagonist Goa'Uld in the SG-1 fleet?",
       answers: ["Jarod", "Spock", "Teal'c", "Uld'Gald"],
       correct: 2,
       timeLimit: 10,
+      hint: "He's a Jaffa loyal to the humans.",
     },
     {
       text: "Who is the last French president of the 3rd Republic?",
@@ -174,9 +189,11 @@ const translations = {
       ],
       correct: 0,
       timeLimit: 15,
+      hint: "He served right before WWII.",
     },
   ],
 };
+
 
 let questions = [];
 let currentQuestionIndex = 0;
