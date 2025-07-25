@@ -349,6 +349,32 @@ function showQuestion() {
 
   nextBtn.classList.add("hidden");
 
+    // -- Ajout du bloc indice --
+  const existingHint = getElement("#hint-container");
+  if (existingHint) existingHint.remove();
+
+  const hintContainer = document.createElement("div");
+  hintContainer.id = "hint-container";
+
+  const hintButton = document.createElement("button");
+  hintButton.textContent = uiText[languageSelect.value].hint || "🪄 Indice 🪄";
+  hintButton.classList.add("hint-btn");
+
+  const hintText = document.createElement("p");
+  hintText.classList.add("hint-text");
+  hintText.style.display = "none";
+
+  hintButton.addEventListener("click", () => {
+    hintText.textContent = q.hint || uiText[languageSelect.value].noHint;
+    hintText.style.display = "block";
+    hintButton.disabled = true;
+  });
+
+  hintContainer.appendChild(hintButton);
+  hintContainer.appendChild(hintText);
+  questionText.after(hintContainer);
+  // -- Fin du bloc indice --
+
   if (isInfiniteMode) {
     hideElement(timerDiv);
     const existingEndGameBtn = getElement("#end-game-btn");
