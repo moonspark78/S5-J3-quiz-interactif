@@ -26,6 +26,7 @@ Un quiz interactif en HTML/CSS/JS permettant :
 - **Réponse** : Un clic sur une proposition déclenche le feedback.
 - **Temps** : Si le chrono arrive à zéro, on bloque la question.
 - **Score final** : Indiqué en fin de quiz, compare avec le meilleur score.
+- **Mode Infini** : Jouer un quiz sans fin avec des questions aléatoires.
 
 ## Améliorations possibles
 
@@ -43,3 +44,9 @@ Un quiz interactif en HTML/CSS/JS permettant :
 ## Auteurs
 
 Ce projet sert d’exemple pédagogique pour comprendre la structure d’une application web simple, sa documentation et son organisation agile (backlog, user stories) et Gitflow.
+
+## Version
+
+- Version : 1.0.0
+- Date : 24/07/2025
+- Équipe : Antonin-Omar
