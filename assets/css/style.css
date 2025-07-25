@@ -143,3 +143,35 @@ button:hover {
 	margin-top: 20px;
 	width: 60%;
 }
+
+
+/* Mode sombre */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode #intro-screen,
+body.dark-mode #question-screen,
+body.dark-mode #result-screen {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode button {
+  background-color: #444;     /* Gris foncé au lieu de noir */
+  color: #fff;                /* Texte blanc */
+  border: 1px solid #777;     /* Optionnel pour contraste */
+}
+
+body.dark-mode button:hover {
+  background-color: #666;     /* Plus clair au survol */
+}
+
+body.dark-mode #timer-div {
+  color: #ff6666;
+}
+
+body.dark-mode #progress {
+  color: #aaa;
+}

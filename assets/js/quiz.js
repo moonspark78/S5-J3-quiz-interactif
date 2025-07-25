@@ -38,7 +38,8 @@ const uiText = {
     summaryYourAnswer: "Votre réponse",
     summaryCorrectAnswer: "Bonne réponse",
     infiniteMode: "Mode Infini", // Nouveau texte
-    endGame: "Terminer la partie", // Nouveau texte
+    darkModeOn: "Activer le mode sombre",
+    darkModeOff: "Désactiver le mode sombre",
   },
   en: {
     title: "Dynamic Quiz",
@@ -58,6 +59,8 @@ const uiText = {
     summaryCorrectAnswer: "Correct Answer",
     infiniteMode: "Infinite Mode", // New text
     endGame: "End Game", // New text
+    darkModeOn: "Enable dark mode",
+    darkModeOff: "Disable dark mode",
   },
 };
 
@@ -208,6 +211,29 @@ const currentQuestionIndexSpan = getElement("#current-question-index");
 const totalQuestionsSpan = getElement("#total-questions");
 
 const summaryTableContainer = getElement("#summary-table-container");
+function updateDarkModeButtonText() {
+  const lang = languageSelect.value;
+  const isDark = document.body.classList.contains("dark-mode");
+  darkModeBtn.textContent = isDark ? uiText[lang].darkModeOff : uiText[lang].darkModeOn;
+}
+
+
+const darkModeBtn = getElement("#dark-mode-btn");
+
+const savedDarkMode = loadFromLocalStorage("darkMode", false);
+if (savedDarkMode) {
+  document.body.classList.add("dark-mode");
+  darkModeBtn.textContent = "Désactiver le mode sombre";
+} else {
+  darkModeBtn.textContent = "Activer le mode sombre";
+}
+
+
+darkModeBtn.addEventListener("click", () => {
+  const isDarkMode = document.body.classList.toggle("dark-mode");
+  saveToLocalStorage("darkMode", isDarkMode);
+  updateDarkModeButtonText();
+});
 
 // Init
 startBtn.addEventListener("click", () => startQuiz(false)); // Mode normal
@@ -221,6 +247,7 @@ setText(bestScoreEnd, bestScore);
 const languageSelect = getElement("#language-select");
 languageSelect.addEventListener("change", () => {
   applyTranslations(languageSelect.value);
+  updateDarkModeButtonText();
 });
 
 applyTranslations(languageSelect.value);
