@@ -22,7 +22,7 @@ console.log("Quiz JS loaded...");
 
 const uiText = {
   fr: {
-    title: "Quiz Dynamique",
+    //title: "Quiz Dynamique",
     introNotice: "Testez vos connaissances en quelques questions chronométrées !",
     bestScore: "Meilleur score",
     start: "Commencer le quiz",
@@ -42,7 +42,7 @@ const uiText = {
     darkModeOff: "Désactiver le mode sombre",
   },
   en: {
-    title: "Dynamic Quiz",
+    //title: "Dynamic Quiz",
     introNotice: "Test your knowledge with a few timed questions!",
     bestScore: "Best score",
     start: "Start the quiz",
@@ -256,7 +256,7 @@ function applyTranslations(lang) {
   const t = uiText[lang] || uiText["fr"];
 
   document.title = t.title;
-  setText(getElement("h1"), t.title);
+  //setText(getElement("h1"), t.title);
   setText(getElement(".notice"), t.introNotice);
   getElement("label[for='language-select']").textContent = t.selectLanguage;
   setText(startBtn, t.start);
